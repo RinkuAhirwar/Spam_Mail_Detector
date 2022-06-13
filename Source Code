@@ -1,0 +1,47 @@
+import pandas as pd;
+import numpy as np;
+from sklearn.naive_bayes import MultinomialNB
+
+data=pd.read_csv('spam.csv')
+
+data.head()
+
+data['is_spam']=data['Category']
+data['is_spam']=np.where(data['is_spam']=='spam',1,0)
+
+data.head()
+
+from sklearn.feature_extraction.text import CountVectorizer
+feature=CountVectorizer()
+Message=feature.fit_transform(data.Message.values)
+Message.toarray()[:3]
+
+from sklearn.model_selection import train_test_split
+x_train,x_test,y_train,y_test  =   train_test_split(Message,data.is_spam,train_size=0.75)
+
+model=MultinomialNB()
+model.fit(x_train,y_train)
+
+y_test_pred=model.predict(x_test)
+y_test_pred
+
+from sklearn.metrics import confusion_matrix
+confusion_matrix(y_test, y_test_pred)
+
+model.score(x_test,y_test)
+
+model.predict(Message)
+
+def email_(str):
+    str=[str]
+    Message=feature.transform(str);
+    k=model.predict(Message);
+    if k==0:
+        return print('HAM');
+    else:
+        return print('SPAM');
+    
+
+# Enter mail
+
+email_(' Hey how are you')
